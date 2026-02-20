@@ -31,13 +31,17 @@ pytest tests/integration/   # requires Postgres + Ollama
 ## Key Files
 
 - `src/zahn/config.py` — Pydantic BaseSettings; fails fast on missing vars
-- `src/zahn/models.py` — Pydantic contracts (KeywordEntry, SentimentJob, LLMResponse, SentimentResult)
-- `src/zahn/keywords.py` — CSV loader + domain context builder + keyword scanner
-- `src/zahn/prompt.py` — Prompt engineering (build_prompt)
+- `src/zahn/models.py` — Pydantic contracts (SentimentJob, LLMResponse, SentimentResult)
+- `src/zahn/prompt.py` — Domain context builder and prompt engineering (build_prompt)
 - `src/zahn/llm.py` — Ollama HTTP client (call_ollama, parse_llm_response)
 - `src/zahn/db.py` — PostgreSQL claim/write/release (FOR UPDATE SKIP LOCKED)
 - `src/zahn/analysis.py` — Orchestrates prompt→llm→validate per job
 - `src/zahn/worker.py` — Polling loop + CLI entry point
+
+## Sentiment Classification
+
+The LLM holistically assesses each message and returns a label, a verbatim excerpt
+that drives the classification, and a short reasoning in English.
 
 ## Error Handling
 
@@ -46,5 +50,6 @@ Max attempts before marking a job `failed`: configurable via `MAX_ATTEMPTS` env 
 
 ## Database
 
-Run `migrations/001_create_sentiment_jobs.sql` against your Postgres instance.
+Run the migration SQL against your Postgres instance.
 Rails wraps it with `execute File.read(...)` in an ActiveRecord migration.
+Note: `data/` and `migrations/` are excluded from version control.
