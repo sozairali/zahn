@@ -17,4 +17,5 @@ def analyze_message(job: SentimentJob, config: Settings) -> SentimentResult:
         excerpt=llm_result.excerpt,
         reasoning=llm_result.reasoning,
         raw_llm_response=raw,
+        detected_language=llm_result.detected_language,
     )

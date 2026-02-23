@@ -12,7 +12,6 @@ class SentimentJob(BaseModel):
     message_text: str
     source_record_id: Optional[int] = None
     source_record_type: Optional[str] = None
-    language_hint: Optional[str] = None
     attempts: int = 0
 
 
@@ -20,6 +19,7 @@ class LLMResponse(BaseModel):
     label: str
     excerpt: str
     reasoning: str
+    detected_language: Optional[str] = None
 
     @field_validator("label")
     @classmethod
@@ -50,6 +50,7 @@ class SentimentResult(BaseModel):
     excerpt: str
     reasoning: str
     raw_llm_response: str
+    detected_language: Optional[str] = None
 
     @field_validator("label")
     @classmethod

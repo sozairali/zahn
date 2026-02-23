@@ -25,6 +25,7 @@ SUPPORTED LANGUAGES: en / fr / es — analyze the message as-is, do not translat
 OUTPUT FORMAT (JSON only, no markdown):
 {
   "label": "frustration|satisfaction|neutral",
+  "detected_language": "en|fr|es",
   "excerpt": "<verbatim substring from the message that most drives the label>",
   "reasoning": "<1-2 sentences in English explaining the label>"
 }

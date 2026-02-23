@@ -9,6 +9,7 @@ from zahn.models import LLMResponse
 
 VALID_JSON = """{
   "label": "frustration",
+  "detected_language": "en",
   "excerpt": "case is late",
   "reasoning": "The customer is frustrated about a delayed case."
 }"""

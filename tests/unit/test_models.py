@@ -7,7 +7,6 @@ class TestSentimentJob:
     def test_minimal(self):
         job = SentimentJob(id=1, message_text="hello")
         assert job.attempts == 0
-        assert job.language_hint is None
 
     def test_full(self):
         job = SentimentJob(
@@ -15,7 +14,6 @@ class TestSentimentJob:
             message_text="test message",
             source_record_id=100,
             source_record_type="Conversation",
-            language_hint="en",
             attempts=1,
         )
         assert job.source_record_type == "Conversation"

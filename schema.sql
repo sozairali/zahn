@@ -3,7 +3,6 @@ CREATE TABLE sentiment_jobs (
     message_text        TEXT         NOT NULL,
     source_record_id    BIGINT,
     source_record_type  VARCHAR(100),
-    language_hint       VARCHAR(10)  DEFAULT NULL,
 
     status              VARCHAR(20)  NOT NULL DEFAULT 'pending',
     claimed_at          TIMESTAMP WITH TIME ZONE DEFAULT NULL,
@@ -12,6 +11,7 @@ CREATE TABLE sentiment_jobs (
     last_error          TEXT         DEFAULT NULL,
 
     sentiment_label     VARCHAR(20)  DEFAULT NULL,
+    detected_language   VARCHAR(10)  DEFAULT NULL,
     excerpt             TEXT         DEFAULT NULL,
     reasoning           TEXT         DEFAULT NULL,
     raw_llm_response    TEXT         DEFAULT NULL,

@@ -7,7 +7,6 @@ def sample_job() -> SentimentJob:
     return SentimentJob(
         id=1,
         message_text="This case is extremely late and I had to redo it three times!",
-        language_hint=None,
         attempts=0,
     )
 
@@ -18,4 +17,5 @@ def frustration_llm_response() -> LLMResponse:
         label="frustration",
         excerpt="extremely late and I had to redo it three times",
         reasoning="The customer expresses frustration about a delayed case requiring multiple remakes.",
+        detected_language="en",
     )

@@ -16,7 +16,6 @@ SAMPLE_JOBS = [
             "The fit was spot on and my patient loved the shade match. "
             "Really appreciate the attention to detail — keep it up."
         ),
-        "language_hint": "en",
     },
     {
         "message_text": (
@@ -24,7 +23,6 @@ SAMPLE_JOBS = [
             "The margins are still open and the occlusion is nowhere near right. "
             "I'm losing patience and my patient has been waiting six weeks."
         ),
-        "language_hint": "en",
     },
     {
         "message_text": (
@@ -32,14 +30,12 @@ SAMPLE_JOBS = [
             "I've left two voicemails and sent an email — nobody has gotten back to me. "
             "Patient is coming in tomorrow morning, this is completely unacceptable."
         ),
-        "language_hint": "en",
     },
     {
         "message_text": (
             "We received case #6102 this morning, everything looks great. "
             "Thank you for the quick turnaround, we'll have more cases coming your way."
         ),
-        "language_hint": "en",
     },
     {
         "message_text": (
@@ -47,7 +43,6 @@ SAMPLE_JOBS = [
             "is calling me back. The quality on the last two cases has been inconsistent "
             "and at this point I'm seriously considering switching labs."
         ),
-        "language_hint": "en",
     },
     # ── Spanish (3) ──────────────────────────────────────────────────────────
     {
@@ -56,7 +51,6 @@ SAMPLE_JOBS = [
             "Ya es la segunda vez que pasa esto con el mismo paciente. "
             "Necesito que alguien me llame hoy mismo para resolver esto."
         ),
-        "language_hint": "es",
     },
     {
         "message_text": (
@@ -64,14 +58,12 @@ SAMPLE_JOBS = [
             "El ajuste fue perfecto y la paciente quedó muy contenta con el resultado. "
             "Seguiremos enviando casos con ustedes sin duda."
         ),
-        "language_hint": "es",
     },
     {
         "message_text": (
             "Necesito saber el estado del caso #9102. "
             "El paciente tiene cita mañana a las 10 y aún no hemos recibido el trabajo."
         ),
-        "language_hint": "es",
     },
     # ── French (2) ───────────────────────────────────────────────────────────
     {
@@ -80,7 +72,6 @@ SAMPLE_JOBS = [
             "C'est la deuxième fois en un mois et le délai de livraison était déjà trop long. "
             "Si la situation ne s'améliore pas rapidement, nous devrons chercher un autre laboratoire."
         ),
-        "language_hint": "fr",
     },
     {
         "message_text": (
@@ -88,7 +79,6 @@ SAMPLE_JOBS = [
             "La prothèse est impeccable et la patiente est vraiment ravie du résultat. "
             "Merci pour votre excellent travail, à très bientôt."
         ),
-        "language_hint": "fr",
     },
 ]
 
@@ -105,8 +95,8 @@ def insert_samples(conn: psycopg.Connection) -> list[int]:
     for job in SAMPLE_JOBS:
         cur = conn.execute(
             """
-            INSERT INTO sentiment_jobs (message_text, language_hint)
-            VALUES (%(message_text)s, %(language_hint)s)
+            INSERT INTO sentiment_jobs (message_text)
+            VALUES (%(message_text)s)
             RETURNING id
             """,
             job,
@@ -119,7 +109,7 @@ def insert_samples(conn: psycopg.Connection) -> list[int]:
 def print_results(conn: psycopg.Connection, job_ids: list[int]) -> None:
     rows = conn.execute(
         """
-        SELECT id, language_hint, sentiment_label, excerpt, reasoning, status
+        SELECT id, detected_language, sentiment_label, excerpt, reasoning, status
         FROM sentiment_jobs
         WHERE id = ANY(%(ids)s)
         ORDER BY id
@@ -134,7 +124,7 @@ def print_results(conn: psycopg.Connection, job_ids: list[int]) -> None:
     for row in rows:
         label = row["status"] if row["sentiment_label"] is None else row["sentiment_label"]
         colour = LABEL_COLOUR.get(label, "")
-        lang = (row["language_hint"] or "??").upper()
+        lang = (row["detected_language"] or "??").upper()
 
         print(f"\n[{lang}]  Job #{row['id']}  →  {colour}{label.upper()}{RESET}")
 

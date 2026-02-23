@@ -57,7 +57,7 @@ def claim_job(
             FOR UPDATE SKIP LOCKED
         )
         RETURNING id, message_text, source_record_id, source_record_type,
-                  language_hint, attempts
+                  attempts
         """,
         {"worker_id": worker_id, "max_attempts": max_attempts},
     )
@@ -74,6 +74,7 @@ def write_result(conn: psycopg.Connection, result: SentimentResult) -> None:
         UPDATE sentiment_jobs
         SET status = 'completed',
             sentiment_label = %(label)s,
+            detected_language = %(detected_language)s,
             excerpt = %(excerpt)s,
             reasoning = %(reasoning)s,
             raw_llm_response = %(raw)s,
@@ -85,6 +86,7 @@ def write_result(conn: psycopg.Connection, result: SentimentResult) -> None:
         """,
         {
             "label": result.label,
+            "detected_language": result.detected_language,
             "excerpt": result.excerpt,
             "reasoning": result.reasoning,
             "raw": result.raw_llm_response,

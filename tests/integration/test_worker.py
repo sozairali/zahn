@@ -15,6 +15,7 @@ pytestmark = pytest.mark.integration
 
 VALID_RAW = """{
   "label": "frustration",
+  "detected_language": "en",
   "excerpt": "extremely late",
   "reasoning": "The case was delivered late causing frustration."
 }"""

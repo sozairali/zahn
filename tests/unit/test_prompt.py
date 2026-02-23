@@ -16,6 +16,7 @@ class TestBuildPrompt:
     def test_contains_json_schema_hint(self):
         result = build_prompt(MESSAGE)
         assert '"label"' in result
+        assert '"detected_language"' in result
         assert '"excerpt"' in result
         assert '"reasoning"' in result
 
