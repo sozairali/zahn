@@ -15,7 +15,7 @@ LLM-powered Python worker that classifies dental lab customer messages as
 # Pull the model
 ollama pull llama3.2:3b
 
-# Create the database schema (run against your Postgres instance)
+# Create the database schema
 psql your_database < schema.sql
 
 # Install Python dependencies
@@ -29,38 +29,24 @@ cp .env.example .env
 zahn-worker
 ```
 
+## Demo
+
+To insert 10 sample conversations (5 EN, 3 ES, 2 FR) and process them end-to-end:
+
+```bash
+python demo.py
+```
+
 ## Database Schema
 
-```sql
-CREATE TABLE sentiment_jobs (
-    id                  BIGSERIAL PRIMARY KEY,
-    message_text        TEXT         NOT NULL,
-    source_record_id    BIGINT,
-    source_record_type  VARCHAR(100),
-    language_hint       VARCHAR(10)  DEFAULT NULL,
+The schema is in `schema.sql`. Key columns written on completion:
 
-    status              VARCHAR(20)  NOT NULL DEFAULT 'pending',
-    claimed_at          TIMESTAMP WITH TIME ZONE DEFAULT NULL,
-    claimed_by          VARCHAR(100) DEFAULT NULL,
-    attempts            SMALLINT     NOT NULL DEFAULT 0,
-    last_error          TEXT         DEFAULT NULL,
-
-    sentiment_label     VARCHAR(20)  DEFAULT NULL,
-    excerpt             TEXT         DEFAULT NULL,
-    reasoning           TEXT         DEFAULT NULL,
-    raw_llm_response    TEXT         DEFAULT NULL,
-    keyword_hits        JSONB        DEFAULT NULL,
-
-    created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX idx_sentiment_jobs_pending
-    ON sentiment_jobs (created_at) WHERE status = 'pending';
-
-CREATE INDEX idx_sentiment_jobs_source
-    ON sentiment_jobs (source_record_type, source_record_id);
-```
+| Column | Description |
+|---|---|
+| `sentiment_label` | `frustration`, `satisfaction`, or `neutral` |
+| `excerpt` | Verbatim substring from the message that drove the label |
+| `reasoning` | 1-2 sentence explanation in English |
+| `raw_llm_response` | Full JSON response from Ollama for auditing |
 
 ## Configuration
 

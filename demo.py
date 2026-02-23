@@ -1,7 +1,6 @@
 """
 Demo: insert 10 sample conversations and process them with the worker.
 """
-import sys
 import textwrap
 import psycopg
 from psycopg.rows import dict_row
@@ -140,7 +139,6 @@ def print_results(conn: psycopg.Connection, job_ids: list[int]) -> None:
 
         print(f"\n[{lang}]  Job #{row['id']}  →  {colour}{label.upper()}{RESET}")
 
-        msg = next(j["message_text"] for j in SAMPLE_JOBS if True)  # just for width
         if row["excerpt"]:
             print(f"  Excerpt  : \"{row['excerpt']}\"")
         if row["reasoning"]:
