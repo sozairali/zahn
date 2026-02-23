@@ -26,8 +26,7 @@ OUTPUT FORMAT (JSON only, no markdown):
 {
   "label": "frustration|satisfaction|neutral",
   "excerpt": "<verbatim substring from the message that most drives the label>",
-  "reasoning": "<1-2 sentences in English explaining the label>",
-  "detected_language": "en|fr|es"
+  "reasoning": "<1-2 sentences in English explaining the label>"
 }
 
 MESSAGE:

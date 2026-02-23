@@ -8,8 +8,7 @@ from zahn.models import SentimentJob, SentimentResult
 VALID_RAW = """{
   "label": "frustration",
   "excerpt": "extremely late",
-  "reasoning": "The customer is frustrated about a late case.",
-  "detected_language": "en"
+  "reasoning": "The customer is frustrated about a late case."
 }"""
 
 

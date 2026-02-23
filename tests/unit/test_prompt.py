@@ -18,7 +18,6 @@ class TestBuildPrompt:
         assert '"label"' in result
         assert '"excerpt"' in result
         assert '"reasoning"' in result
-        assert '"detected_language"' in result
 
     def test_contains_valid_labels(self):
         result = build_prompt(MESSAGE)

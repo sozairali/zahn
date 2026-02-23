@@ -15,7 +15,6 @@ CREATE TABLE sentiment_jobs (
     excerpt             TEXT         DEFAULT NULL,
     reasoning           TEXT         DEFAULT NULL,
     raw_llm_response    TEXT         DEFAULT NULL,
-    keyword_hits        JSONB        DEFAULT NULL,
 
     created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()

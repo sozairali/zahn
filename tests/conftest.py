@@ -18,5 +18,4 @@ def frustration_llm_response() -> LLMResponse:
         label="frustration",
         excerpt="extremely late and I had to redo it three times",
         reasoning="The customer expresses frustration about a delayed case requiring multiple remakes.",
-        detected_language="en",
     )

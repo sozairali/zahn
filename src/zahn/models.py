@@ -20,7 +20,6 @@ class LLMResponse(BaseModel):
     label: str
     excerpt: str
     reasoning: str
-    detected_language: str
 
     @field_validator("label")
     @classmethod

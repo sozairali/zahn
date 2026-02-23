@@ -28,8 +28,7 @@ class TestLLMResponse:
     def test_valid_labels(self):
         for label in ("frustration", "satisfaction", "neutral"):
             r = LLMResponse(
-                label=label, excerpt="some text", reasoning="some reason", detected_language="en"
-            )
+                label=label, excerpt="some text", reasoning="some reason"            )
             assert r.label == label
 
     def test_invalid_label(self):
@@ -42,8 +41,7 @@ class TestLLMResponse:
 
     def test_excerpt_stripped(self):
         r = LLMResponse(
-            label="neutral", excerpt="  hello world  ", reasoning="reason", detected_language="en"
-        )
+            label="neutral", excerpt="  hello world  ", reasoning="reason"        )
         assert r.excerpt == "hello world"
 
     def test_empty_reasoning_rejected(self):
