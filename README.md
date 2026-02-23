@@ -1,7 +1,8 @@
 # Zahn — Dental Lab Sentiment Analysis Worker
 
 LLM-powered Python worker that classifies dental lab customer messages as
-`frustration`, `satisfaction`, or `neutral`, returning a verbatim excerpt and reasoning.
+`frustration`, `satisfaction`, or `neutral`, detecting the message language and
+returning a verbatim excerpt and reasoning.
 
 ## Requirements
 
@@ -45,6 +46,7 @@ The schema is in `schema.sql`. Key columns written on completion:
 | Column | Description |
 |---|---|
 | `sentiment_label` | `frustration`, `satisfaction`, or `neutral` |
+| `detected_language` | `en`, `fr`, or `es` as detected by the LLM |
 | `excerpt` | Verbatim substring from the message that drove the label |
 | `reasoning` | 1-2 sentence explanation in English |
 | `raw_llm_response` | Full JSON response from Ollama for auditing |

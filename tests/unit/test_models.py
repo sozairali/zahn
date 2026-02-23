@@ -26,12 +26,22 @@ class TestLLMResponse:
     def test_valid_labels(self):
         for label in ("frustration", "satisfaction", "neutral"):
             r = LLMResponse(
-                label=label, excerpt="some text", reasoning="some reason"            )
+                label=label, excerpt="some text", reasoning="some reason", detected_language="en")
             assert r.label == label
 
     def test_invalid_label(self):
         with pytest.raises(ValidationError, match="label must be one of"):
             LLMResponse(label="angry", excerpt="text", reasoning="reason", detected_language="en")
+
+    def test_valid_languages(self):
+        for lang in ("en", "fr", "es"):
+            r = LLMResponse(
+                label="neutral", excerpt="text", reasoning="reason", detected_language=lang)
+            assert r.detected_language == lang
+
+    def test_invalid_language(self):
+        with pytest.raises(ValidationError, match="detected_language must be one of"):
+            LLMResponse(label="neutral", excerpt="text", reasoning="reason", detected_language="de")
 
     def test_empty_excerpt_rejected(self):
         with pytest.raises(ValidationError, match="excerpt must not be empty"):
@@ -39,7 +49,7 @@ class TestLLMResponse:
 
     def test_excerpt_stripped(self):
         r = LLMResponse(
-            label="neutral", excerpt="  hello world  ", reasoning="reason"        )
+            label="neutral", excerpt="  hello world  ", reasoning="reason", detected_language="en")
         assert r.excerpt == "hello world"
 
     def test_empty_reasoning_rejected(self):

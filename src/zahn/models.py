@@ -5,6 +5,7 @@ from pydantic import BaseModel, field_validator
 
 
 VALID_LABELS = frozenset({"frustration", "satisfaction", "neutral"})
+VALID_LANGUAGES = frozenset({"en", "fr", "es"})
 
 
 class SentimentJob(BaseModel):
@@ -19,13 +20,20 @@ class LLMResponse(BaseModel):
     label: str
     excerpt: str
     reasoning: str
-    detected_language: Optional[str] = None
+    detected_language: str
 
     @field_validator("label")
     @classmethod
     def label_must_be_valid(cls, v: str) -> str:
         if v not in VALID_LABELS:
             raise ValueError(f"label must be one of {sorted(VALID_LABELS)}, got {v!r}")
+        return v
+
+    @field_validator("detected_language")
+    @classmethod
+    def language_must_be_valid(cls, v: str) -> str:
+        if v not in VALID_LANGUAGES:
+            raise ValueError(f"detected_language must be one of {sorted(VALID_LANGUAGES)}, got {v!r}")
         return v
 
     @field_validator("excerpt")

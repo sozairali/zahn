@@ -40,8 +40,12 @@ pytest tests/integration/   # requires Postgres + Ollama
 
 ## Sentiment Classification
 
-The LLM holistically assesses each message and returns a label, a verbatim excerpt
-that drives the classification, and a short reasoning in English.
+The LLM holistically assesses each message and returns:
+- **label**: `frustration | satisfaction | neutral`
+- **detected_language**: `en | fr | es` (required, validated)
+- **excerpt**: verbatim substring from the message that drives the label
+- **reasoning**: 1-2 sentences in English explaining the label
+
 Dental lab domain knowledge (case types, quality signals, multilingual terms) is
 hardcoded in the prompt template in `prompt.py`.
 
