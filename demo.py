@@ -8,7 +8,6 @@ from psycopg.rows import dict_row
 
 from zahn.config import load_settings
 from zahn.db import get_connection, reset_stale_claims
-from zahn.prompt import load_domain_context
 from zahn.worker import run_one_iteration
 
 SAMPLE_JOBS = [
@@ -161,7 +160,6 @@ def print_results(conn: psycopg.Connection, job_ids: list[int]) -> None:
 
 def main() -> None:
     config = load_settings()
-    domain_context = load_domain_context(config.keywords_csv_path)
 
     print("Inserting 10 sample conversations...")
     with get_connection(config) as conn:
@@ -172,7 +170,7 @@ def main() -> None:
     print("\nProcessing jobs...\n")
     processed = 0
     while True:
-        did_work = run_one_iteration(config, domain_context)
+        did_work = run_one_iteration(config)
         if not did_work:
             break
         processed += 1

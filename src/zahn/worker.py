@@ -6,12 +6,11 @@ import time
 from zahn.analysis import analyze_message
 from zahn.config import Settings, load_settings
 from zahn.db import claim_job, get_connection, release_job, reset_stale_claims, write_result
-from zahn.prompt import load_domain_context
 
 logger = logging.getLogger(__name__)
 
 
-def run_one_iteration(config: Settings, domain_context: str) -> bool:
+def run_one_iteration(config: Settings) -> bool:
     """Claim and process one job. Returns True if a job was processed, False if none pending."""
     with get_connection(config) as conn:
         job = claim_job(conn, config.worker_id, config.max_attempts)
@@ -22,7 +21,7 @@ def run_one_iteration(config: Settings, domain_context: str) -> bool:
     logger.info("Claimed job %d (attempt %d)", job.id, job.attempts)
 
     try:
-        result = analyze_message(job, config, domain_context)
+        result = analyze_message(job, config)
         with get_connection(config) as conn:
             write_result(conn, result)
         logger.info(
@@ -43,14 +42,11 @@ def run_one_iteration(config: Settings, domain_context: str) -> bool:
 def run_worker(config: Settings) -> None:
     logger.info("Worker starting: id=%s model=%s", config.worker_id, config.ollama_model)
 
-    domain_context = load_domain_context(config.keywords_csv_path)
-    logger.info("Loaded domain context from %s", config.keywords_csv_path)
-
     with get_connection(config) as conn:
         reset_stale_claims(conn)
 
     while True:
-        processed = run_one_iteration(config, domain_context)
+        processed = run_one_iteration(config)
         if not processed:
             time.sleep(config.poll_interval)
 

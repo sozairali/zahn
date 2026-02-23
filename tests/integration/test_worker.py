@@ -10,7 +10,6 @@ from unittest.mock import patch
 from zahn.config import Settings
 from zahn.db import get_connection
 from zahn.worker import run_one_iteration
-from zahn.prompt import load_domain_context
 
 pytestmark = pytest.mark.integration
 
@@ -25,11 +24,6 @@ VALID_RAW = """{
 @pytest.fixture(scope="module")
 def config():
     return Settings()
-
-
-@pytest.fixture(scope="module")
-def domain_context(config):
-    return load_domain_context(config.keywords_csv_path)
 
 
 @pytest.fixture
@@ -57,16 +51,16 @@ def insert_job(conn, message: str, attempts: int = 0) -> int:
 
 
 class TestRunOneIteration:
-    def test_returns_false_when_no_jobs(self, config, domain_context):
+    def test_returns_false_when_no_jobs(self, config):
         with patch("zahn.analysis.call_ollama", return_value=VALID_RAW):
-            result = run_one_iteration(config, domain_context)
+            result = run_one_iteration(config)
         assert result is False
 
-    def test_processes_pending_job(self, db_conn, config, domain_context):
+    def test_processes_pending_job(self, db_conn, config):
         job_id = insert_job(db_conn, "[itest] this case is extremely late")
 
         with patch("zahn.analysis.call_ollama", return_value=VALID_RAW):
-            processed = run_one_iteration(config, domain_context)
+            processed = run_one_iteration(config)
 
         assert processed is True
         row = db_conn.execute(
@@ -75,12 +69,12 @@ class TestRunOneIteration:
         assert row["status"] == "completed"
         assert row["sentiment_label"] == "frustration"
 
-    def test_releases_job_on_error(self, db_conn, config, domain_context):
+    def test_releases_job_on_error(self, db_conn, config):
         job_id = insert_job(db_conn, "[itest] error test job")
 
         import httpx
         with patch("zahn.analysis.call_ollama", side_effect=httpx.TimeoutException("timeout")):
-            processed = run_one_iteration(config, domain_context)
+            processed = run_one_iteration(config)
 
         assert processed is True
         row = db_conn.execute(
@@ -89,12 +83,12 @@ class TestRunOneIteration:
         assert row["status"] == "pending"
         assert "TimeoutException" in row["last_error"]
 
-    def test_marks_failed_after_max_attempts(self, db_conn, config, domain_context):
+    def test_marks_failed_after_max_attempts(self, db_conn, config):
         job_id = insert_job(db_conn, "[itest] max attempts job", attempts=config.max_attempts - 1)
 
         import httpx
         with patch("zahn.analysis.call_ollama", side_effect=httpx.TimeoutException("timeout")):
-            run_one_iteration(config, domain_context)
+            run_one_iteration(config)
 
         row = db_conn.execute(
             "SELECT status FROM sentiment_jobs WHERE id=%s", (job_id,)

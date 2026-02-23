@@ -19,10 +19,6 @@ class Settings(BaseSettings):
     # Auto-generate from hostname:pid if not set
     worker_id: str = ""
 
-    keywords_csv_path: str = (
-        "data/raw/Frustration Finder Query Generator - Sheet1.csv"
-    )
-
     def model_post_init(self, __context: object) -> None:
         if not self.worker_id:
             object.__setattr__(

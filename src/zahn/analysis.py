@@ -6,12 +6,8 @@ from zahn.models import SentimentJob, SentimentResult
 from zahn.prompt import build_prompt
 
 
-def analyze_message(
-    job: SentimentJob,
-    config: Settings,
-    domain_context: str,
-) -> SentimentResult:
-    prompt = build_prompt(job.message_text, domain_context)
+def analyze_message(job: SentimentJob, config: Settings) -> SentimentResult:
+    prompt = build_prompt(job.message_text)
     raw = call_ollama(prompt, config)
     llm_result = parse_llm_response(raw)
 
