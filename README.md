@@ -15,8 +15,9 @@ LLM-powered Python worker that classifies dental lab customer messages as
 # Pull the model
 ollama pull llama3.2:3b
 
-# Create the database schema
-psql your_database < schema.sql
+# Create the database, then apply the schema
+createdb zahn_dev
+psql zahn_dev < schema.sql
 
 # Install Python dependencies
 pip install -e ".[dev]"

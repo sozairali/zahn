@@ -3,7 +3,6 @@ Demo: insert 10 sample conversations and process them with the worker.
 """
 import textwrap
 import psycopg
-from psycopg.rows import dict_row
 
 from zahn.config import load_settings
 from zahn.db import get_connection, reset_stale_claims
