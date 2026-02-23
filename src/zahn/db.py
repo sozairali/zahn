@@ -23,13 +23,12 @@ def get_connection(config: Settings) -> Generator[psycopg.Connection, None, None
 
 def reset_stale_claims(conn: psycopg.Connection) -> int:
     cur = conn.execute(
-        """
+        f"""
         UPDATE sentiment_jobs
         SET status = 'pending', claimed_at = NULL, claimed_by = NULL, updated_at = NOW()
         WHERE status = 'claimed'
-          AND claimed_at < NOW() - INTERVAL %(interval)s
-        """,
-        {"interval": f"{_STALE_MINUTES} minutes"},
+          AND claimed_at < NOW() - INTERVAL '{_STALE_MINUTES} minutes'
+        """
     )
     conn.commit()
     count = cur.rowcount
