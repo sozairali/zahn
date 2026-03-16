@@ -1,8 +1,8 @@
 # Zahn — Dental Lab Sentiment Analysis Worker
 
 LLM-powered Python worker that classifies dental lab customer messages using two
-independent binary classifiers (`is_frustrated`, `is_satisfied`), detecting the
-message language and returning a verbatim excerpt and reasoning for each dimension.
+independent binary classifiers (`frustration_label`, `satisfaction_label`), detecting
+the message language and returning a verbatim excerpt and reasoning for each dimension.
 
 ## Requirements
 
@@ -47,7 +47,7 @@ The schema is in `schema.sql`. Key columns written on completion:
 |---|---|---|
 | `frustration_label` | `yes\|no` | Whether the customer is frustrated |
 | `satisfaction_label` | `yes\|no` | Whether the customer is satisfied |
-| `detected_language` | `en\|fr\|es` | Language detected by the frustration call |
+| `detected_language` | `en\|fr\|es` | Language detected by the LLM |
 | `frustration_excerpt` | text | Verbatim substring driving the frustration label |
 | `frustration_reasoning` | text | 1-2 sentence explanation (frustration) |
 | `satisfaction_excerpt` | text | Verbatim substring driving the satisfaction label |
@@ -71,6 +71,7 @@ All settings are read from environment variables (or a `.env` file):
 | `OLLAMA_TIMEOUT` | `60` | HTTP timeout in seconds |
 | `POLL_INTERVAL` | `5` | Seconds between polling cycles |
 | `MAX_ATTEMPTS` | `3` | Max retries before marking job `failed` |
+| `WORKER_ID` | `hostname:pid` | Identifier for this worker instance (auto-generated) |
 
 ## Tests
 
@@ -78,3 +79,7 @@ All settings are read from environment variables (or a `.env` file):
 pytest tests/unit/           # fast, no external dependencies
 pytest tests/integration/    # requires running Postgres + Ollama
 ```
+
+## License
+
+MIT — see [LICENSE](LICENSE).
