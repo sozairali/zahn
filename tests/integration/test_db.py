@@ -84,31 +84,43 @@ class TestWriteResult:
 
         result = SentimentResult(
             job_id=job_id,
-            label="frustration",
-            excerpt="write result",
-            reasoning="Test reasoning.",
-            raw_llm_response='{"label":"frustration"}',
-            keyword_hits={"late": 5},
+            frustration_label="yes",
+            satisfaction_label="no",
+            detected_language="en",
+            frustration_excerpt="write result",
+            frustration_reasoning="Test frustration reasoning.",
+            satisfaction_excerpt="no positive signals",
+            satisfaction_reasoning="Test satisfaction reasoning.",
+            raw_frustration_response='{"label":"yes"}',
+            raw_satisfaction_response='{"label":"no"}',
         )
         write_result(db_conn, result)
 
         row = db_conn.execute(
-            "SELECT status, sentiment_label, excerpt, keyword_hits FROM sentiment_jobs WHERE id=%s",
+            """SELECT status, frustration_label, satisfaction_label, detected_language,
+                      frustration_excerpt, frustration_reasoning
+               FROM sentiment_jobs WHERE id=%s""",
             (job_id,),
         ).fetchone()
         assert row["status"] == "completed"
-        assert row["sentiment_label"] == "frustration"
-        assert row["excerpt"] == "write result"
+        assert row["frustration_label"] == "yes"
+        assert row["satisfaction_label"] == "no"
+        assert row["detected_language"] == "en"
+        assert row["frustration_excerpt"] == "write result"
 
     def test_raises_if_not_claimed(self, db_conn, config):
         job_id = insert_job(db_conn, "[test] guard check")
         result = SentimentResult(
             job_id=job_id,
-            label="neutral",
-            excerpt="guard check",
-            reasoning="Test.",
-            raw_llm_response="{}",
-            keyword_hits={},
+            frustration_label="no",
+            satisfaction_label="no",
+            detected_language="en",
+            frustration_excerpt="guard check",
+            frustration_reasoning="Test.",
+            satisfaction_excerpt="guard check",
+            satisfaction_reasoning="Test.",
+            raw_frustration_response="{}",
+            raw_satisfaction_response="{}",
         )
         with pytest.raises(RuntimeError, match="guard failed"):
             write_result(db_conn, result)
