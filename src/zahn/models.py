@@ -56,7 +56,7 @@ class SentimentResult(BaseModel):
     job_id: int
     frustration_label: str
     satisfaction_label: str
-    detected_language: Optional[str] = None
+    detected_language: str
     frustration_excerpt: str
     frustration_reasoning: str
     satisfaction_excerpt: str

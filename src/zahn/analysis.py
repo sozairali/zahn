@@ -100,6 +100,12 @@ def analyze_message(job: SentimentJob, config: Settings) -> SentimentResult:
     sat = run_classifier(job.message_text, build_satisfaction_prompt, config)
     sat.raise_if_failed()
 
+    if frust.detected_language != sat.detected_language:
+        logger.warning(
+            "Language mismatch for job %d: frustration=%s, satisfaction=%s (using frustration)",
+            job.id, frust.detected_language, sat.detected_language,
+        )
+
     return SentimentResult(
         job_id=job.id,
         detected_language=frust.detected_language,

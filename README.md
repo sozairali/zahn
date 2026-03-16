@@ -59,17 +59,6 @@ The two dimensions are independent — a job can have `frustration_label = 'yes'
 `satisfaction_label = 'yes'` simultaneously (e.g. a customer frustrated about one thing
 but genuinely complimentary about another).
 
-### Migrating an existing database
-
-If you have an existing instance using the old single-label schema, apply:
-
-```bash
-psql zahn_dev < migrations/002_binary_classifiers.sql
-```
-
-This drops `sentiment_label`, `excerpt`, `reasoning`, `raw_llm_response`; adds the nine
-new columns; and resets completed rows to `pending` so they are re-processed.
-
 ## Configuration
 
 All settings are read from environment variables (or a `.env` file):

@@ -147,9 +147,9 @@ class TestSentimentResult:
         with pytest.raises(ValidationError):
             self._valid_result(satisfaction_label="")
 
-    def test_detected_language_optional(self):
-        result = self._valid_result(detected_language=None)
-        assert result.detected_language is None
+    def test_detected_language_required(self):
+        with pytest.raises(ValidationError):
+            self._valid_result(detected_language=None)
 
     def test_job_id_stored(self):
         result = self._valid_result(job_id=99)
