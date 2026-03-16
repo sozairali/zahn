@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     database_url: str
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "llama3.2:3b"
+    ollama_model: str = "qwen2.5:7b"
     ollama_timeout: int = 60
 
     poll_interval: int = 5

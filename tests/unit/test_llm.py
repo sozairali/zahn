@@ -108,7 +108,7 @@ class TestCallOllama:
 
         config = MagicMock()
         config.ollama_base_url = "http://localhost:11434"
-        config.ollama_model = "llama3.2:3b"
+        config.ollama_model = "qwen2.5:7b"
         config.ollama_timeout = 30
 
         with patch("httpx.Client") as mock_client_cls:
@@ -132,7 +132,7 @@ class TestCallOllama:
 
         config = MagicMock()
         config.ollama_base_url = "http://localhost:11434/"
-        config.ollama_model = "llama3.2:3b"
+        config.ollama_model = "qwen2.5:7b"
         config.ollama_timeout = 30
 
         with patch("httpx.Client") as mock_client_cls:

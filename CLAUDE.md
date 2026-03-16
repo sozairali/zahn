@@ -9,7 +9,7 @@ via a local Ollama LLM, and writes results back.
 ## Architecture
 
 - **Integration**: Shared PostgreSQL polling (no message broker)
-- **LLM**: Ollama with `llama3.2:3b` (local, on-premise)
+- **LLM**: Ollama with `qwen2.5:7b` (local, on-premise)
 - **Languages**: EN, FR, ES
 
 ## Running

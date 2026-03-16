@@ -34,7 +34,7 @@ SAT_YES_RAW = """{
 def mock_config():
     config = MagicMock()
     config.ollama_base_url = "http://localhost:11434"
-    config.ollama_model = "llama3.2:3b"
+    config.ollama_model = "qwen2.5:7b"
     config.ollama_timeout = 30
     return config
 

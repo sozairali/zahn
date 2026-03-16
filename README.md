@@ -8,13 +8,13 @@ the message language and returning a verbatim excerpt and reasoning for each dim
 
 - Python 3.11+
 - PostgreSQL 14+
-- [Ollama](https://ollama.ai) running locally with `llama3.2:3b` pulled
+- [Ollama](https://ollama.ai) running locally with `qwen2.5:7b` pulled
 
 ## Quick Start
 
 ```bash
 # Pull the model
-ollama pull llama3.2:3b
+ollama pull qwen2.5:7b
 
 # Create the database, then apply the schema
 createdb zahn_dev
@@ -67,7 +67,7 @@ All settings are read from environment variables (or a `.env` file):
 |---|---|---|
 | `DATABASE_URL` | *(required)* | PostgreSQL connection string |
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server URL |
-| `OLLAMA_MODEL` | `llama3.2:3b` | Model name |
+| `OLLAMA_MODEL` | `qwen2.5:7b` | Model name |
 | `OLLAMA_TIMEOUT` | `60` | HTTP timeout in seconds |
 | `POLL_INTERVAL` | `5` | Seconds between polling cycles |
 | `MAX_ATTEMPTS` | `3` | Max retries before marking job `failed` |
