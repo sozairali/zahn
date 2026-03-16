@@ -25,10 +25,11 @@ def run_one_iteration(config: Settings) -> bool:
         with get_connection(config) as conn:
             write_result(conn, result)
         logger.info(
-            "Completed job %d: label=%s excerpt=%r",
+            "Completed job %d: frust=%s sat=%s excerpt=%r",
             job.id,
-            result.label,
-            result.excerpt[:80],
+            result.frustration_label,
+            result.satisfaction_label,
+            result.frustration_excerpt[:80],
         )
     except Exception as exc:
         error_msg = f"{type(exc).__name__}: {exc}"

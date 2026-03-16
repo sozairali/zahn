@@ -1,8 +1,8 @@
 # Zahn — Dental Lab Sentiment Analysis Worker
 
-LLM-powered Python worker that classifies dental lab customer messages as
-`frustration`, `satisfaction`, or `neutral`, detecting the message language and
-returning a verbatim excerpt and reasoning.
+LLM-powered Python worker that classifies dental lab customer messages using two
+independent binary classifiers (`is_frustrated`, `is_satisfied`), detecting the
+message language and returning a verbatim excerpt and reasoning for each dimension.
 
 ## Requirements
 
@@ -43,13 +43,21 @@ python demo.py
 
 The schema is in `schema.sql`. Key columns written on completion:
 
-| Column | Description |
-|---|---|
-| `sentiment_label` | `frustration`, `satisfaction`, or `neutral` |
-| `detected_language` | `en`, `fr`, or `es` as detected by the LLM |
-| `excerpt` | Verbatim substring from the message that drove the label |
-| `reasoning` | 1-2 sentence explanation in English |
-| `raw_llm_response` | Full JSON response from Ollama for auditing |
+| Column | Type | Description |
+|---|---|---|
+| `frustration_label` | `yes\|no` | Whether the customer is frustrated |
+| `satisfaction_label` | `yes\|no` | Whether the customer is satisfied |
+| `detected_language` | `en\|fr\|es` | Language detected by the frustration call |
+| `frustration_excerpt` | text | Verbatim substring driving the frustration label |
+| `frustration_reasoning` | text | 1-2 sentence explanation (frustration) |
+| `satisfaction_excerpt` | text | Verbatim substring driving the satisfaction label |
+| `satisfaction_reasoning` | text | 1-2 sentence explanation (satisfaction) |
+| `raw_frustration_response` | text | Full frustration JSON from Ollama (auditing) |
+| `raw_satisfaction_response` | text | Full satisfaction JSON from Ollama (auditing) |
+
+The two dimensions are independent — a job can have `frustration_label = 'yes'` and
+`satisfaction_label = 'yes'` simultaneously (e.g. a customer frustrated about one thing
+but genuinely complimentary about another).
 
 ## Configuration
 

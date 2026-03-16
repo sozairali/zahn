@@ -73,11 +73,15 @@ def write_result(conn: psycopg.Connection, result: SentimentResult) -> None:
         """
         UPDATE sentiment_jobs
         SET status = 'completed',
-            sentiment_label = %(label)s,
+            frustration_label = %(frustration_label)s,
+            satisfaction_label = %(satisfaction_label)s,
             detected_language = %(detected_language)s,
-            excerpt = %(excerpt)s,
-            reasoning = %(reasoning)s,
-            raw_llm_response = %(raw)s,
+            frustration_excerpt = %(frustration_excerpt)s,
+            frustration_reasoning = %(frustration_reasoning)s,
+            satisfaction_excerpt = %(satisfaction_excerpt)s,
+            satisfaction_reasoning = %(satisfaction_reasoning)s,
+            raw_frustration_response = %(raw_frustration_response)s,
+            raw_satisfaction_response = %(raw_satisfaction_response)s,
             claimed_by = NULL,
             claimed_at = NULL,
             updated_at = NOW()
@@ -85,11 +89,15 @@ def write_result(conn: psycopg.Connection, result: SentimentResult) -> None:
           AND status = 'claimed'
         """,
         {
-            "label": result.label,
+            "frustration_label": result.frustration_label,
+            "satisfaction_label": result.satisfaction_label,
             "detected_language": result.detected_language,
-            "excerpt": result.excerpt,
-            "reasoning": result.reasoning,
-            "raw": result.raw_llm_response,
+            "frustration_excerpt": result.frustration_excerpt,
+            "frustration_reasoning": result.frustration_reasoning,
+            "satisfaction_excerpt": result.satisfaction_excerpt,
+            "satisfaction_reasoning": result.satisfaction_reasoning,
+            "raw_frustration_response": result.raw_frustration_response,
+            "raw_satisfaction_response": result.raw_satisfaction_response,
             "job_id": result.job_id,
         },
     )

@@ -15,6 +15,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+tune = ["pandas>=2.2"]
 dev = [
     "pytest>=8.2",
     "pytest-env>=1.1",
@@ -29,6 +30,7 @@ packages = ["src/zahn"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 timeout = 30
 markers = ["integration: requires running PostgreSQL and Ollama"]
 env = [

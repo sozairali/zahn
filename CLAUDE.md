@@ -2,8 +2,9 @@
 
 ## Project Overview
 
-Python worker that reads pending jobs from PostgreSQL, classifies customer messages as
-`frustration | satisfaction | neutral` using a local Ollama LLM, and writes results back.
+Python worker that reads pending jobs from PostgreSQL, classifies customer messages
+using two independent binary classifiers (frustration yes/no, satisfaction yes/no)
+via a local Ollama LLM, and writes results back.
 
 ## Architecture
 
@@ -31,28 +32,44 @@ pytest tests/integration/   # requires Postgres + Ollama
 ## Key Files
 
 - `src/zahn/config.py` — Pydantic BaseSettings; fails fast on missing vars
-- `src/zahn/models.py` — Pydantic contracts (SentimentJob, LLMResponse, SentimentResult)
-- `src/zahn/prompt.py` — Prompt engineering; dental lab domain knowledge hardcoded in template (build_prompt)
-- `src/zahn/llm.py` — Ollama HTTP client (call_ollama, parse_llm_response)
+- `src/zahn/models.py` — Pydantic contracts (SentimentJob, BinaryLLMResponse, SentimentResult)
+- `src/zahn/prompt.py` — Prompt engineering; separate frustration/satisfaction prompt builders (build_frustration_prompt, build_satisfaction_prompt)
+- `src/zahn/llm.py` — Ollama HTTP client (call_ollama, parse_binary_response, validate_excerpt)
 - `src/zahn/db.py` — PostgreSQL claim/write/release (FOR UPDATE SKIP LOCKED)
-- `src/zahn/analysis.py` — Orchestrates prompt→llm→validate per job
+- `src/zahn/analysis.py` — Orchestrates two binary classifier calls per job (run_classifier)
 - `src/zahn/worker.py` — Polling loop + CLI entry point
 
 ## Sentiment Classification
 
-The LLM holistically assesses each message and returns:
-- **label**: `frustration | satisfaction | neutral`
+Two independent binary classifiers run per message:
+
+- **Frustration** (`build_frustration_prompt`): label `yes | no`
+- **Satisfaction** (`build_satisfaction_prompt`): label `yes | no`
+
+A message can be both frustrated and satisfied simultaneously.
+
+Each classifier returns:
+- **label**: `yes | no`
 - **detected_language**: `en | fr | es` (required, validated)
-- **excerpt**: verbatim substring from the message that drives the label
+- **excerpt**: verbatim substring from the message that drives the label (required when `yes`, may be empty when `no`)
 - **reasoning**: 1-2 sentences in English explaining the label
 
 Dental lab domain knowledge (case types, quality signals, multilingual terms) is
-hardcoded in the prompt template in `prompt.py`.
+hardcoded in the prompt templates in `prompt.py`.
 
 ## Error Handling
 
-One `try/except` per job in `worker.py`. All other failures propagate and trigger `release_job`.
-Max attempts before marking a job `failed`: configurable via `MAX_ATTEMPTS` env var (default 3).
+Error handling uses two layers, each with a clear purpose:
+
+- **`worker.py`** — single `try/except` per job. On failure, calls `release_job` which
+  re-queues the job or marks it `failed` after `MAX_ATTEMPTS` (env var, default 3).
+- **`run_classifier`** — retries LLM parse/validation failures (up to 3 attempts per
+  classifier call). Only catches expected retryable errors: `JSONDecodeError`,
+  `ValidationError`, `HTTPStatusError`, `ExcerptValidationError`. Programming bugs
+  propagate immediately to `worker.py`.
+
+Do not add `try/except` blocks elsewhere. Keep error handling graceful and meaningful —
+catch only what you can act on (retry or record), and let everything else propagate.
 
 ## Database
 
