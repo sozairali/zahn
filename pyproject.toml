@@ -6,6 +6,8 @@ build-backend = "hatchling.build"
 name = "zahn"
 version = "0.1.0"
 description = "Dental lab sentiment analysis worker using LLM-based classification"
+license = {text = "MIT"}
+authors = [{name = "sozairali"}]
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.7",
