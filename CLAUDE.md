@@ -59,8 +59,17 @@ hardcoded in the prompt templates in `prompt.py`.
 
 ## Error Handling
 
-One `try/except` per job in `worker.py`. All other failures propagate and trigger `release_job`.
-Max attempts before marking a job `failed`: configurable via `MAX_ATTEMPTS` env var (default 3).
+Error handling uses two layers, each with a clear purpose:
+
+- **`worker.py`** — single `try/except` per job. On failure, calls `release_job` which
+  re-queues the job or marks it `failed` after `MAX_ATTEMPTS` (env var, default 3).
+- **`run_classifier`** — retries LLM parse/validation failures (up to 3 attempts per
+  classifier call). Only catches expected retryable errors: `JSONDecodeError`,
+  `ValidationError`, `HTTPStatusError`, `ExcerptValidationError`. Programming bugs
+  propagate immediately to `worker.py`.
+
+Do not add `try/except` blocks elsewhere. Keep error handling graceful and meaningful —
+catch only what you can act on (retry or record), and let everything else propagate.
 
 ## Database
 
