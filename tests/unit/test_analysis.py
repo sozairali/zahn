@@ -1,6 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
+import httpx
+
 from zahn.analysis import analyze_message, run_classifier, ClassifierResult
 from zahn.models import SentimentJob, SentimentResult
 from zahn.prompt import build_frustration_prompt
@@ -182,8 +184,14 @@ class TestRunClassifier:
             run_classifier("msg", build_frustration_prompt, mock_config)  # must not raise
 
     def test_never_raises_on_http_failure(self, mock_config):
-        with patch("zahn.analysis.call_ollama", side_effect=RuntimeError("conn refused")):
-            run_classifier("msg", build_frustration_prompt, mock_config)  # must not raise
+        error = httpx.HTTPStatusError(
+            "conn refused",
+            request=httpx.Request("POST", "http://localhost"),
+            response=httpx.Response(500),
+        )
+        with patch("zahn.analysis.call_ollama", side_effect=error):
+            result = run_classifier("msg", build_frustration_prompt, mock_config)
+        assert result.exception is not None
 
     def test_total_failure_sets_parse_error(self, mock_config):
         with patch("zahn.analysis.call_ollama", return_value="not json"):

@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import json
 import logging
 from dataclasses import dataclass, field
 from typing import Callable
+
+import httpx
+from pydantic import ValidationError
 
 from zahn.config import Settings
 from zahn.llm import ExcerptValidationError, call_ollama, parse_binary_response, validate_excerpt
@@ -53,11 +57,13 @@ def run_classifier(
 ) -> ClassifierResult:
     """Call the LLM for a single binary classifier dimension with retry.
 
-    Retries on any parse failure, including ``ExcerptValidationError``.
-    Excerpt retries are counted separately so callers can distinguish
-    hallucination-driven failures from other parse errors.
+    Retries on expected failures: JSON parse errors, Pydantic validation
+    errors, HTTP errors, and ``ExcerptValidationError``.  Programming bugs
+    (e.g. ``AttributeError``, ``TypeError``) propagate immediately to the
+    single ``try/except`` boundary in ``worker.py``.
 
-    Always returns a ``ClassifierResult`` — never raises.
+    Always returns a ``ClassifierResult`` on expected failures — never raises
+    for retryable errors.
     """
     last_exc: Exception | None = None
     last_raw: str = ""
@@ -82,7 +88,7 @@ def run_classifier(
             excerpt_retries += 1
             last_exc = exc
             logger.debug("Excerpt validation failed (attempt %d/%d): %s", attempt, max_attempts, exc)
-        except Exception as exc:
+        except (json.JSONDecodeError, ValidationError, httpx.HTTPStatusError) as exc:
             last_exc = exc
             logger.debug("Classifier call failed (attempt %d/%d): %s", attempt, max_attempts, exc)
 

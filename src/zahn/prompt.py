@@ -115,7 +115,9 @@ THE FOLLOWING DO NOT QUALIFY AS SATISFACTION:
 
 LABEL AS "no" when:
 - The note is routine/administrative with no positive sentiment expressed
-- The customer is frustrated (frustration and satisfaction are independent dimensions)
+- The note contains only complaints, delays, or issues with no genuine positive signal
+  (Note: frustration and satisfaction are independent — a message CAN be both. Only label
+  satisfaction "no" when there is no positive signal, not simply because frustration exists.)
 - The note is ambiguous or contains mixed signals\
 """
 
